@@ -119,6 +119,7 @@ video {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 10px;
+    margin: 10px;
 }
 
 .download-grid button {
@@ -203,13 +204,16 @@ footer {
 
             <div class="download-grid">
                 {% for format in data.formats %}
-                <form action="/download" method="POST">
-                    <input type="hidden" name="url" value="{{request.form.url}}">
-                    <input type="hidden" name="format_id" value="{{format.format_id}}">
-                    <button type="submit">
-                        {{format.resolution or format.ext}}
-                    </button>
-                </form>
+                    {% if format.height in [240, 360, 480, 720] %}
+                    <form action="/download" method="POST">
+                        <input type="hidden" name="url" value="{{request.form.url}}">
+                        <input type="hidden" name="format_id" value="{{format.format_id}}">
+                        <button type="submit">
+                                {{format.height or format.ext}} | {{format.filesize}}mb
+                         
+                        </button>
+                    </form>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>

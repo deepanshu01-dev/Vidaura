@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request, flash
+from flask import Flask, render_template, redirect, request, flash, url_for
 import yt_dlp
 import os
 
@@ -19,14 +19,15 @@ def get_vid_info(url):
   
   formats = []
   for f in info["formats"]:
-    formats.append({
-      "format_id": f["format_id"],
-      'ext': f['ext'],
-      'resolution': f.get("resolution"),
-      "height": f.get("height"),
-      "filesize": round((f.get('filesize') or 0)/(1024*1024), 2),
-      "url": f.get('url'),
-    })
+    if f.get("acodec") != "none" and f.get("vcodec") != "none":
+      formats.append({
+        "format_id": f["format_id"],
+        'ext': f['ext'],
+        'resolution': f.get("resolution"),
+        "height": f.get("height"),
+        "filesize": round((f.get('filesize') or 0)/(1024*1024), 2),
+        "url": f.get('url'),
+      })
 
   return {
     "title": info['title'],
@@ -50,15 +51,37 @@ def download():
   format_id = request.form['format_id']
 
   ydl_opts = {
-    'format': f"{format_id}+bestaudio/best",
+    'format': "best",
     'outtmpl': f'{download_folder}/%(title)s.%(ext)s',
     'merge_output': 'mp4',
   }
   
   with yt_dlp.YoutubeDL(ydl_opts) as ydl:
     ydl.download([url])
-  
-  return "Download Started"
+  flash("Download started successfully!")
+
+  return redirect(url_for('downloading'))
+
+@app.route('/downloading', methods=['GET', 'POST'])
+def downloading():
+  return render_template('downloading.html')
+
+
+@app.route('/about')
+def about():
+  return render_template('about.html')
+
+@app.route('/contact')
+def contact():
+  return render_template('contact.html')
+
+@app.route('/privacy')
+def privacy():
+  return render_template('privacy.html')
+
+@app.route('/terms')
+def terms():
+  return render_template('terms.html')
 
 
 if __name__ == "__main__":

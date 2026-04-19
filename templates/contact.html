@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Contact Us</h1>
+
+<p>Email: support@vidaura.com</p>
+<p>For any issues or suggestions, feel free to reach out.</p>
+
+<form>
+    <input type="text" placeholder="Your Name" required style="width:100%; padding:10px; margin-bottom:10px;">
+    <input type="email" placeholder="Your Email" required style="width:100%; padding:10px; margin-bottom:10px;">
+    <textarea placeholder="Your Message" required style="width:100%; padding:10px;"></textarea>
+    <button style="margin-top:10px;">Send Message</button>
+</form>
+{% endblock %}

@@ -45,13 +45,20 @@
 
             <div class="download-grid">
                 {% for format in data.formats %}
-                    {% if format.height in [240, 360, 480, 720] %}
+                    {% if format.height==None and format.ext == "m4a" %}
                     <form action="/download" method="POST">
                         <input type="hidden" name="url" value="{{request.form.url}}">
                         <input type="hidden" name="format_id" value="{{format.format_id}}">
                         <button type="submit">
-                                {{format.height or format.ext}} | {{format.filesize}}mb
-                         
+                                Audio Only {{format.ext}} | {{format.filesize}}mb
+                        </button>
+                    </form>
+                    {% elif format.height in [240, 360, 480, 720, 1080 ] %}
+                    <form action="/download" method="POST">
+                        <input type="hidden" name="url" value="{{request.form.url}}">
+                        <input type="hidden" name="format_id" value="{{format.format_id}}">
+                        <button type="submit">
+                                {{format.height}} {{format.ext}} | {{format.filesize}}mb
                         </button>
                     </form>
                     {% endif %}

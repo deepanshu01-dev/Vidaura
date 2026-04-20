@@ -19,7 +19,7 @@ def get_vid_info(url):
   
   formats = []
   for f in info["formats"]:
-    if f.get("acodec") != "none" and f.get("vcodec") != "none":
+    if f.get("acodec") != "none":
       formats.append({
         "format_id": f["format_id"],
         'ext': f['ext'],

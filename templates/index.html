@@ -22,11 +22,10 @@
         <p>Fast, simple, and powerful video & audio downloader</p>
 
         <form method="POST" onsubmit="showLoader()">
-            <input type="text" name="url" placeholder="Paste YouTube URL here..." required>
+            <input type="text" name="url" placeholder="Paste Video URL here..." required>
             <button type="submit">Fetch</button>
         </form>
 
-        <!-- Loader -->
         <div class="loader" id="loader">
             <div></div>
         </div>
@@ -50,15 +49,22 @@
                         <input type="hidden" name="url" value="{{request.form.url}}">
                         <input type="hidden" name="format_id" value="{{format.format_id}}">
                         <button type="submit">
-                                Audio Only {{format.ext}} | {{format.filesize}}mb
+                                Audio Only {{format.ext}}
+                                {% if format.filesize != 0.0 %} 
+                                | {{format.filesize}}mb
+                                {% endif %}
                         </button>
                     </form>
-                    {% elif format.height in [240, 360, 480, 720, 1080 ] %}
+                    {% elif format.height or format.resolution in [240, 360, 480, 720, 1080 ] %}
                     <form action="/download" method="POST">
                         <input type="hidden" name="url" value="{{request.form.url}}">
                         <input type="hidden" name="format_id" value="{{format.format_id}}">
                         <button type="submit">
-                                {{format.height}} {{format.ext}} | {{format.filesize}}mb
+                                {{format.resolution}} {{format.ext}}
+                                {% if format.filesize != 0.0 %} 
+                                | {{format.filesize}}mb
+                                {% endif %}
+
                         </button>
                     </form>
                     {% endif %}

@@ -18,22 +18,34 @@ def get_vid_info(url):
     info = ydl.extract_info(url)
   
   formats = []
-  for f in info["formats"]:
-    if f.get("acodec") != "none":
-      formats.append({
-        "format_id": f["format_id"],
-        'ext': f['ext'],
-        'resolution': f.get("resolution"),
-        "height": f.get("height"),
-        "filesize": round((f.get('filesize') or 0)/(1024*1024), 2),
-        "url": f.get('url'),
-      })
+  if "youtu.be" or "youtube.com" in url:
+    for f in info["formats"]:
+      if f.get("acodec") != "none":
+        formats.append({
+          "format_id": f["format_id"],
+          'ext': f['ext'],
+          'resolution': f.get("resolution"),
+          "height": f.get("height"),
+          "filesize": round((f.get('filesize') or 0)/(1024*1024), 2),
+          "url": f.get('url'),
+        })
+  elif "facebook.com" or "instagram.com" in url:
+    for f in info['formats']:
+        if f.get('ext') == 'mp4' and f.get('url'):
+            formats.append({
+                'format_id': f['format_id'],
+                'resolution': f.get('resolution'),
+                'url': f.get('url'),
+                'ext': f['ext'],
+                "filesize": round((f.get('filesize') or 0)/(1024*1024), 2),
+            })
 
   return {
-    "title": info['title'],
-    "thumbnail": info["thumbnail"],
+    "title": info['title'] or None,
+    "thumbnail": info["thumbnail"] or None,
     "formats": formats
   }
+  
 
 
 @app.route("/", methods=['GET', 'POST'])
@@ -53,7 +65,7 @@ def download():
   ydl_opts = {
     'format': "best",
     'outtmpl': f'{download_folder}/%(title)s.%(ext)s',
-    'merge_output': 'mp4',
+    'cookiefile': 'cookies.txt',
   }
   
   with yt_dlp.YoutubeDL(ydl_opts) as ydl:
